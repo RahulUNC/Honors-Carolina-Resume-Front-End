@@ -2,7 +2,9 @@ import { AppBar, Toolbar, Typography, Modal, Box, TextField, Button, IconButton 
 import { Document } from "react-pdf";
 import { Home } from "@mui/icons-material";
 import React from "react";
+import axios from "axios"
 import { DataGrid } from "@mui/x-data-grid";
+import ApprovedResumes from "./ApprovedResume";
 
 export default function Main() {
 
@@ -27,55 +29,17 @@ export default function Main() {
     const [pending, setPending] = React.useState(null);
 
     const getData = () => {
-        let res = [{
-            "id":1,
-            "name" : "Rahul Narvekar",
-            "major": "CS and Econ",
-            "resume" : "https://drive.google.com/file/d/1hezwS7qfRwCvbGV8wNhLqvqXQxQp7-dH/view?usp=sharing",
-            "status": "pending"
-        },{
-            "id":2,
-            "name" : "Charles Chow",
-            "major": "CS and Business",
-            "resume" : "https://drive.google.com/file/d/1hezwS7qfRwCvbGV8wNhLqvqXQxQp7-dH/view?usp=sharing",
-            "status": "pending"
-        },{
-            "id":3,
-            "name" : "Saurav Bahali",
-            "major": "CS and Econ",
-            "resume" : "https://drive.google.com/file/d/1hezwS7qfRwCvbGV8wNhLqvqXQxQp7-dH/view?usp=sharing",
-            "status": "approved",
-            "tags": "Swfit, NodeJS, Express, Java, OOP"
-        },{
-            "id":4,
-            "name" : "Habib Khadri",
-            "major": "CS and Business",
-            "resume" : "https://drive.google.com/file/d/1hezwS7qfRwCvbGV8wNhLqvqXQxQp7-dH/view?usp=sharing",
-            "status": "approved",
-            "tags": "Trello, Product Management, Java, OOP"
-        }];
-        let rowsApproved = [];
-        let rowsPending = [];
-        res.forEach(element => {
-            if(element.status === "approved") {
-                rowsApproved.push({
-                    id: element.id,
-                    name: element.name,
-                    major: element.major,
-                    resume: element.resume,
-                    tags: element.tags
-                })
-            } else {
-                rowsPending.push({
-                    id: element.id,
-                    name: element.name,
-                    major: element.major,
-                    resume: element.resume
-                })
-            }
-        });
-        setApproved(rowsApproved);
-        setPending(rowsPending);
+        let resquest = axios.get("http://node-mongodb-sample-git-rnarveka.apps.cloudapps.unc.edu/").then(res => {
+            console.log(res.data);
+            let rowsApproved = [];
+            let rowsPending = [];
+            res.data.forEach(element => {
+                rowsApproved.push(
+                    <ApprovedResumes resume={element}></ApprovedResumes>
+                )
+            });
+            setApproved(rowsApproved);
+        })
     }
     
     const modalSubmit = () => { 
@@ -173,7 +137,7 @@ export default function Main() {
                 </Modal>
             </header>
             {auth && <Box m={5} pl={2} pr={2}>
-                <Modal open={resumeView} onClose={closeResume}>
+                {/* <Modal open={resumeView} onClose={closeResume}>
                     <Box sx={style} component="form">
                         <Typography id="modal-modal-title" variant="h6" component="h2">
                             Login
@@ -209,8 +173,8 @@ export default function Main() {
                         checkboxSelection
                         pb={2}
                     />
-                </div>}
-
+                </div>} */}
+                {setApproved}
             </Box>}
         </div>
 
